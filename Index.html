@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Countdown for Prince</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    overflow:hidden;
+    font-family:Montserrat,sans-serif;
+    color:white;
+    background:
+    radial-gradient(circle at top,#2563eb 0%,#111827 55%,#7f1d1d 100%);
+}
+
+/* Comic dots */
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background-image:
+radial-gradient(rgba(255,255,255,.07) 1px, transparent 1px);
+background-size:18px 18px;
+opacity:.6;
+animation:dots 35s linear infinite;
+}
+
+@keyframes dots{
+from{transform:translateY(0);}
+to{transform:translateY(80px);}
+}
+
+/* Webs */
+
+.web{
+position:absolute;
+width:240px;
+height:240px;
+border-top:2px solid rgba(255,255,255,.25);
+border-left:2px solid rgba(255,255,255,.25);
+border-radius:100%;
+}
+
+.web.left{
+left:-80px;
+top:-80px;
+transform:rotate(45deg);
+}
+
+.web.right{
+right:-80px;
+top:-80px;
+transform:scaleX(-1) rotate(45deg);
+}
+
+.container{
+
+height:100vh;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+padding:25px;
+
+position:relative;
+
+z-index:2;
+
+}
+
+.panel{
+
+max-width:950px;
+
+width:100%;
+
+padding:45px;
+
+border-radius:28px;
+
+background:rgba(255,255,255,.08);
+
+backdrop-filter:blur(12px);
+
+border:1px solid rgba(255,255,255,.18);
+
+box-shadow:0 0 50px rgba(0,0,0,.45);
+
+text-align:center;
+
+}
+
+h1{
+
+font-family:Bangers,cursive;
+
+font-size:4rem;
+
+letter-spacing:4px;
+
+color:#FFD54F;
+
+text-shadow:4px 4px 0 #111;
+
+}
+
+.subtitle{
+
+margin-top:10px;
+
+font-size:1.2rem;
+
+opacity:.9;
+
+}
+
+.timer{
+
+display:grid;
+
+grid-template-columns:repeat(4,1fr);
+
+gap:20px;
+
+margin-top:45px;
+
+}
+
+.card{
+
+background:linear-gradient(180deg,#1d4ed8,#1e3a8a);
+
+border-radius:20px;
+
+padding:22px;
+
+box-shadow:
+0 0 20px rgba(37,99,235,.5),
+0 0 45px rgba(220,38,38,.25);
+
+animation:pulse 3s infinite;
+
+}
+
+.card:nth-child(even){
+
+background:linear-gradient(180deg,#dc2626,#991b1b);
+
+}
+
+.value{
+
+font-size:4rem;
+
+font-weight:700;
+
+}
+
+.label{
+
+margin-top:10px;
+
+letter-spacing:3px;
+
+font-size:.85rem;
+
+opacity:.9;
+
+}
+
+.footer{
+
+margin-top:40px;
+
+opacity:.8;
+
+}
+
+.skyline{
+
+position:absolute;
+
+bottom:0;
+
+left:0;
+
+width:100%;
+
+height:170px;
+
+background:
+linear-gradient(to top,#000 80%,transparent),
+repeating-linear-gradient(
+90deg,
+transparent 0 20px,
+#000 20px 45px,
+transparent 45px 60px);
+
+opacity:.85;
+
+}
+
+@keyframes pulse{
+
+50%{
+
+transform:translateY(-5px);
+
+}
+
+}
+
+@media(max-width:800px){
+
+.timer{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+h1{
+
+font-size:2.8rem;
+
+}
+
+.value{
+
+font-size:3rem;
+
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="web left"></div>
+<div class="web right"></div>
+
+<div class="container">
+
+<div class="panel">
+
+<h1>COUNTDOWN!</h1>
+
+<div class="subtitle">
+For Prince • Friday 31 July 2026 • 09:10 BST
+</div>
+
+<div class="timer">
+
+<div class="card">
+<div class="value" id="days">0</div>
+<div class="label">DAYS</div>
+</div>
+
+<div class="card">
+<div class="value" id="hours">0</div>
+<div class="label">HOURS</div>
+</div>
+
+<div class="card">
+<div class="value" id="minutes">0</div>
+<div class="label">MINUTES</div>
+</div>
+
+<div class="card">
+<div class="value" id="seconds">0</div>
+<div class="label">SECONDS</div>
+</div>
+
+</div>
+
+<div class="footer">
+🕸️ Every second brings the adventure closer.
+</div>
+
+</div>
+
+</div>
+
+<div class="skyline"></div>
+
+<script>
+
+const target = new Date("2026-07-31T08:10:00Z");
+
+function update(){
+
+const now = new Date();
+
+let diff = target-now;
+
+if(diff<=0){
+
+document.querySelector(".panel").innerHTML=
+"<h1>🎉 IT'S TIME! 🎉</h1><br><h2>The countdown has ended.</h2>";
+
+return;
+
+}
+
+const d=Math.floor(diff/86400000);
+diff%=86400000;
+
+const h=Math.floor(diff/3600000);
+diff%=3600000;
+
+const m=Math.floor(diff/60000);
+diff%=60000;
+
+const s=Math.floor(diff/1000);
+
+days.textContent=d;
+hours.textContent=h;
+minutes.textContent=m;
+seconds.textContent=s;
+
+}
+
+update();
+
+setInterval(update,1000);
+
+</script>
+
+</body>
+</html>
